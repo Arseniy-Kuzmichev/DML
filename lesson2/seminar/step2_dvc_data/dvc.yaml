@@ -1,8 +1,0 @@
-stages:
-  get_data:
-    cmd: python src/get_data.py
-    deps:
-      - src/get_data.py
-      - params.yaml
-    outs:
-      - data/raw/tips.csv
