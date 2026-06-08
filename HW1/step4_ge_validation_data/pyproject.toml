@@ -1,0 +1,37 @@
+[tool.poetry]
+name = "ml-data-validation-homework"
+version = "0.1.0"
+description = "ML pipeline with data and model validation"
+authors = ["Student"]
+readme = "README.md"
+packages = []
+
+
+[tool.poetry.dependencies]
+python = ">=3.10,<4.0"
+pandas = "~2.2"
+scikit-learn = "~1.5"
+dvc = "~3.50"
+great-expectations = "~0.18"
+pyyaml = "~6.0"
+ipywidgets = ">=7.5.1,<8"
+pathspec = "<0.12"
+
+[tool.poetry.group.dev.dependencies]
+black = "^24.10.0"
+ruff = "^0.8.4"
+isort = "^5.13.2"
+pre-commit = "^4.0.0"
+
+[tool.black]
+line-length = 88
+
+[tool.isort]
+profile = "black"
+
+[tool.ruff]
+line-length = 88
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

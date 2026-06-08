@@ -1,51 +1,126 @@
-# Шаг 4: Мониторинг FastAPI сервиса - Домашнее задание
+# Step 4: FastAPI Monitoring
 
-## Задание
+Эта домашка реализует мониторинг FastAPI-сервиса инференса ONNX-модели из шага 2.
+Мониторинг проверяет `/health` и `/predict`, считает latency/error-rate, пишет JSON-логи и показывает цветные алерты в консоли.
 
-Реализовать систему мониторинга для FastAPI сервиса из шага 2 с настраиваемыми алертами и цветным логированием.
+## Что есть в проекте
 
-## Требования к реализации
+```text
+step4_monitoring/
+├── main.py
+├── src/
+│   ├── monitor.py
+│   ├── logger.py
+│   └── config.py
+├── config/
+│   └── monitoring_config.yaml
+├── logs/
+├── test_images/
+├── requirements.txt
+└── README.md
+```
 
-### 1. Интеграция с FastAPI сервисом
-- Использовать сервис инференса ONNX модели из шага 2
-- Запускать FastAPI сервис программно или подключаться к запущенному
-- Мониторить endpoints: `/health` и `/predict`
+## Что мониторится
 
-### 2. Мониторинг основных метрик
-- **Response Time**: время отклика API запросов
-- **P95 Latency**: 95-й перцентиль времени ответа
-- **Error Rate**: процент неудачных запросов
-- **Health Status**: статус работоспособности сервиса
-- **Consecutive Failures**: количество последовательных ошибок
+- `Response Time` — среднее время ответа по запросам в одном цикле проверки.
+- `P95 Latency` — 95-й перцентиль времени ответа.
+- `Error Rate` — процент неудачных запросов.
+- `Health Status` — результат проверки `/health`.
+- `Consecutive Failures` — количество последовательных ошибок.
 
-### 3. Тестирование инференса
-- Отправлять POST запросы с изображениями на `/predict`
-- Поддерживать любые форматы изображений (jpg, png)
-- Логировать время обработки и результат предсказания
-- Проверять корректность ответа API
+## Цвета алертов
 
-### 4. Цветные алерты
-Реализовать систему алертов с цветовой индикацией:
+- Зеленый — нормальная работа.
+- Желтый — превышены warning-пороги.
+- Красный — превышены critical-пороги или `/health` не отвечает корректно.
 
-- **Зеленый**: Нормальная работа (метрики в пределах нормы)
-- **Желтый**: Предупреждение (превышены warning пороги)
-- **Красный**: Критическое состояние (превышены critical пороги)
+## Установка
 
-### 5. Конфигурируемые пороговые значения
+Из папки `step4_monitoring`:
 
-Пример конфигурационного файла `monitoring_config.yaml`:
+```bash
+python -m venv .venv
+source .venv/bin/activate  # macOS/Linux
+# .venv\Scripts\activate   # Windows
+pip install -r requirements.txt
+```
+
+## Настройка
+
+Откройте `config/monitoring_config.yaml`.
+
+Если FastAPI-сервис из шага 2 уже запущен на `http://localhost:8000`, ничего менять не нужно:
 
 ```yaml
 service:
-  host: "localhost"
-  port: 8000
   base_url: "http://localhost:8000"
+  start_command: ""
+```
 
-monitoring:
-  check_interval_seconds: 30
-  samples_per_check: 3
-  request_timeout_seconds: 10
+Если хотите, чтобы мониторинг сам запускал сервис, заполните `start_command`:
 
+```yaml
+service:
+  start_command: "uvicorn app.main:app --host 0.0.0.0 --port 8000"
+```
+
+Команду нужно заменить на ту, которой запускается ваш FastAPI-сервис из шага 2.
+
+## Тестовые изображения
+
+Для проверки `/predict` положите любые изображения в папку:
+
+```text
+test_images/
+```
+
+Поддерживаются форматы: `jpg`, `jpeg`, `png`, `bmp`, `webp`, `tif`, `tiff`.
+
+Если папка пустая, мониторинг отправит маленькую тестовую PNG-картинку. Но для реальной проверки модели лучше положить обычное изображение, похожее на входные данные вашей модели.
+
+## Запуск
+
+Один цикл проверки:
+
+```bash
+python main.py --once
+```
+
+Постоянный мониторинг:
+
+```bash
+python main.py
+```
+
+По умолчанию проверка запускается каждые 30 секунд.
+
+## Где смотреть результат
+
+Консоль покажет цветной статус:
+
+```text
+[2026-06-07 18:00:00] INFO     [NORMAL] health=True | avg=124.5ms | p95=180.1ms | errors=0.0% | consecutive_failures=0
+```
+
+Файл структурированных логов:
+
+```text
+logs/monitoring.log
+```
+
+Файл метрик в формате JSONL:
+
+```text
+logs/metrics.jsonl
+```
+
+Каждая строка в `metrics.jsonl` — отдельный JSON-объект с метриками одного цикла проверки.
+
+## Как изменить пороги
+
+Пороги задаются в `config/monitoring_config.yaml`:
+
+```yaml
 thresholds:
   response_time_ms:
     warning: 2000
@@ -59,35 +134,30 @@ thresholds:
   consecutive_failures:
     warning: 3
     critical: 5
-
-alerts:
-  enabled: true
-  cooldown_minutes: 5
-
-logging:
-  console_colors: true
-  log_file: "logs/monitoring.log"
-  metrics_file: "logs/metrics.jsonl"
 ```
 
-### 6. Логирование
-- Структурированные логи в JSON формате
-- Отдельный файл для метрик в JSONL формате
-- Консольный вывод с цветовым кодированием
-- Временные метки для всех событий
+Например, если хотите быстрее получать предупреждение по latency, уменьшите `warning`.
 
-## Технические требования
+## Важный момент про `/predict`
 
-### Архитектура системы
+В коде по умолчанию считается, что endpoint принимает файл в поле `file`, то есть примерно так:
+
+```python
+file: UploadFile = File(...)
 ```
-step4_monitoring/
-├── main.py                    # Точка входа
-├── src/
-│   ├── monitor.py            # Основная логика мониторинга
-│   ├── logger.py             # Цветное логирование
-│   └── config.py             # Работа с конфигурацией
-├── config/
-│   └── monitoring_config.yaml
-├── logs/                     # Создается автоматически
-└── README.md
+
+Если в вашем FastAPI-сервисе поле называется иначе, поменяйте это в конфиге:
+
+```yaml
+endpoints:
+  predict_file_field: "image"
 ```
+
+Если API должен возвращать конкретные поля, их можно перечислить здесь:
+
+```yaml
+endpoints:
+  expected_prediction_keys: ["class", "confidence"]
+```
+
+Если список пустой, мониторинг принимает любой валидный JSON-ответ.

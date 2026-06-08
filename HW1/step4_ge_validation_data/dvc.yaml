@@ -39,3 +39,14 @@ stages:
       - models/model.pkl
       - data/processed/dataset.csv
       - params.yaml
+    metrics:
+      - metrics/metrics.json
+
+  validate_model:
+    cmd: python src/validate_model.py
+    deps:
+      - src/validate_model.py
+      - metrics/metrics.json
+      - params.yaml
+    params:
+      - accuracy_min

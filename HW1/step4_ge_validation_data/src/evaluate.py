@@ -1,8 +1,11 @@
+import json
+import os
 import pickle
+
 import pandas as pd
 import yaml
-from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
+from sklearn.model_selection import train_test_split
 
 
 def load_params():
@@ -22,13 +25,27 @@ def evaluate_model():
     y = df["high_tip"]
 
     X_train, X_test, y_train, y_test = train_test_split(
-        X, y, test_size=params["test_size"], random_state=params["seed"]
+        X,
+        y,
+        test_size=params["test_size"],
+        random_state=params["seed"],
     )
 
     y_pred = model.predict(X_test)
     accuracy = accuracy_score(y_test, y_pred)
 
+    metrics = {
+        "accuracy": float(accuracy),
+        "rows_count": int(len(df)),
+    }
+
+    os.makedirs("metrics", exist_ok=True)
+
+    with open("metrics/metrics.json", "w", encoding="utf-8") as f:
+        json.dump(metrics, f, indent=4)
+
     print(f"Accuracy: {accuracy:.4f}")
+    print("Metrics saved to metrics/metrics.json")
 
 
 if __name__ == "__main__":
