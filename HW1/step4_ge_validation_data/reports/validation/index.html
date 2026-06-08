@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Tips Dataset Validation Report</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; }
+        .header { background: #f4f4f4; padding: 20px; border-radius: 8px; }
+        .success { color: #2e7d32; }
+        .failed { color: #d32f2f; }
+        .summary { margin: 20px 0; }
+        .expectation { margin: 10px 0; padding: 10px; border-left: 4px solid #2196f3; }
+        .expectation.success { border-color: #4caf50; background: #f1f8e9; }
+        .expectation.failed { border-color: #f44336; background: #ffebee; }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Tips Dataset Validation Report</h1>
+        <div class="summary">
+            <p><strong>Success Rate:</strong> <span class="success">100.0%</span></p>
+            <p><strong>Total Expectations:</strong> 5</p>
+            <p><strong>Successful:</strong> <span class="success">5</span></p>
+            <p><strong>Failed:</strong> <span class="failed">0</span></p>
+        </div>
+    </div>
+
+    <h2>Expectation Results:</h2>
+
+    <div class="expectation success">
+        <strong>✅ expect_column_values_to_not_be_null</strong>
+        <br><em>Column:</em> total_bill
+        <br><em>Success:</em> True
+    </div>
+    <div class="expectation success">
+        <strong>✅ expect_column_values_to_be_between</strong>
+        <br><em>Column:</em> total_bill
+        <br><em>Success:</em> True
+    </div>
+    <div class="expectation success">
+        <strong>✅ expect_column_values_to_not_be_null</strong>
+        <br><em>Column:</em> tip
+        <br><em>Success:</em> True
+    </div>
+    <div class="expectation success">
+        <strong>✅ expect_column_values_to_not_be_null</strong>
+        <br><em>Column:</em> size
+        <br><em>Success:</em> True
+    </div>
+    <div class="expectation success">
+        <strong>✅ expect_column_values_to_be_between</strong>
+        <br><em>Column:</em> size
+        <br><em>Success:</em> True
+    </div>
+    <div style="margin-top: 40px; padding: 20px; background: #e3f2fd; border-radius: 8px;">
+        <h3>Dataset Summary</h3>
+        <p><strong>Shape:</strong> 244 rows × 7 columns</p>
+        <p><strong>Generated:</strong> 2026-06-07 22:11:17</p>
+    </div>
+</body>
+</html>

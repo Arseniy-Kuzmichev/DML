@@ -1,0 +1,19 @@
+cmd: python src/train.py
+deps:
+- path: data/processed/dataset.csv
+  hash: md5
+  md5: bc8e6e714dbb45514d81ab3155f03ab9
+  size: 3610
+- path: params.yaml
+  hash: md5
+  md5: 4a8d7f24736d479a2ef6244495a04a42
+  size: 134
+- path: src/train.py
+  hash: md5
+  md5: 5af3c7dcbe642498896994a702ce6a30
+  size: 846
+outs:
+- path: models/model.pkl
+  hash: md5
+  md5: de747c396efafea2cc23df0f2a9469e1
+  size: 824

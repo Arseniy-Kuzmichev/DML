@@ -1,0 +1,16 @@
+cmd: python src/validate_data.py
+deps:
+- path: data/raw/tips.csv
+  hash: md5
+  md5: 21a1749bc760e771c7a011b17e17d17b
+  size: 8188
+- path: src/validate_data.py
+  hash: md5
+  md5: d83a6e2f372d658ada410dd462e9efc0
+  size: 4684
+outs:
+- path: reports/validation
+  hash: md5
+  md5: 7cdc7c8e5375765dd78771238886ac00.dir
+  size: 2330
+  nfiles: 1
